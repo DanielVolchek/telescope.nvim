@@ -289,6 +289,12 @@ builtin.vim_options = require_on_exported_call("telescope.builtin.__internal").v
 ---@field fallback boolean: fallback to en if language isn't installed (default: true)
 builtin.help_tags = require_on_exported_call("telescope.builtin.__internal").help_tags
 
+--- Lists available help tags and opens a new window with the relevant help info on `<cr>`
+---@param opts table: options to pass to the picker
+---@field lang string: specify language (default: vim.o.helplang)
+---@field fallback boolean: fallback to en if language isn't installed (default: true)
+builtin.help_string = require_on_exported_call("telescope.builtin.__internal").help_string
+
 --- Lists manpage entries, opens them in a help window on `<cr>`
 ---@param opts table: options to pass to the picker
 ---@field sections table: a list of sections to search, use `{ "ALL" }` to search in all sections (default: { "1" })

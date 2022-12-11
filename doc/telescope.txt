@@ -1245,6 +1245,21 @@ builtin.help_tags({opts})                      *telescope.builtin.help_tags()*
                               (default: true)
 
 
+builtin.help_string({opts})                     *telescope.builtin.help_string()*
+    Lists available help tags based on search option or word under cursor
+    info on `<cr>`
+
+
+    Parameters: ~
+        {opts} (table)  options to pass to the picker
+
+    Options: ~
+        {search}   (string)   specify pattern to search for
+        {lang}     (string)   specify language (default: vim.o.helplang)
+        {fallback} (boolean)  fallback to en if language isn't installed
+                              (default: true)
+
+
 builtin.man_pages({opts})                      *telescope.builtin.man_pages()*
     Lists manpage entries, opens them in a help window on `<cr>`
 

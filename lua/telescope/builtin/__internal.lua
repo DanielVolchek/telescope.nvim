@@ -672,7 +672,19 @@ internal.help_tags = function(opts)
   end
 
   local help_files = {}
+
   local all_files = vim.api.nvim_get_runtime_file("doc/*", true)
+
+  if opts.search then
+    local temp_files = {}
+    for _, fullpath in ipairs(all_files) do
+      if string.match(fullpath, opts.search) then
+        table.insert(temp_files, fullpath)
+      end
+      all_files = temp_files
+    end
+  end
+
   for _, fullpath in ipairs(all_files) do
     local file = utils.path_tail(fullpath)
     if file == "tags" then
@@ -711,9 +723,14 @@ internal.help_tags = function(opts)
     end
   end
 
+  local prompt_title = "Help"
+  if opts.search then
+    prompt_title = prompt_title .. " (" .. opts.search .. ")"
+  end
+
   pickers
     .new(opts, {
-      prompt_title = "Help",
+      prompt_title = prompt_title,
       finder = finders.new_table {
         results = tags,
         entry_maker = function(entry)
@@ -735,7 +752,6 @@ internal.help_tags = function(opts)
             utils.__warn_no_selection "builtin.help_tags"
             return
           end
-
           actions.close(prompt_bufnr)
           if cmd == "default" or cmd == "horizontal" then
             vim.cmd("help " .. selection.value)
@@ -750,6 +766,38 @@ internal.help_tags = function(opts)
       end,
     })
     :find()
+end
+
+-- todo
+-- move to utils and delete from __files.lua
+local opts_contain_invert = function(args)
+  local invert = false
+  local files_with_matches = false
+
+  for _, v in ipairs(args) do
+    if v == "--invert-match" then
+      invert = true
+    elseif v == "--files-with-matches" or v == "--files-without-match" then
+      files_with_matches = true
+    end
+
+    if #v >= 2 and v:sub(1, 1) == "-" and v:sub(2, 2) ~= "-" then
+      for i = 2, #v do
+        local vi = v:sub(i, i)
+        if vi == "v" then
+          invert = true
+        elseif vi == "l" then
+          files_with_matches = true
+        end
+      end
+    end
+  end
+  return invert, files_with_matches
+end
+
+internal.help_string = function(opts)
+  opts.search = vim.F.if_nil(opts.search, vim.fn.expand "<cword>")
+  internal.help_tags(opts)
 end
 
 internal.man_pages = function(opts)
